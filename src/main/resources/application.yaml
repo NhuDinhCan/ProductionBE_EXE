@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: production
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      repositories:
+        enabled: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+springdoc:
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:true}
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: ${SWAGGER_ENABLED:true}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+jwt:
+  secret-key: ${JWT_SECRET}
+  access-token-expiration: 1800000
+  refresh-token-expiration: 1209600000
+
+app:
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
+  websocket:
+    broker:
+      relay:
+        enabled: ${WEBSOCKET_BROKER_RELAY_ENABLED:false}
+        host: ${WEBSOCKET_BROKER_RELAY_HOST:localhost}
+        port: ${WEBSOCKET_BROKER_RELAY_PORT:61613}
+        client-login: ${WEBSOCKET_BROKER_RELAY_CLIENT_LOGIN:guest}
+        client-passcode: ${WEBSOCKET_BROKER_RELAY_CLIENT_PASSCODE:guest}
+        system-login: ${WEBSOCKET_BROKER_RELAY_SYSTEM_LOGIN:guest}
+        system-passcode: ${WEBSOCKET_BROKER_RELAY_SYSTEM_PASSCODE:guest}
+        virtual-host: ${WEBSOCKET_BROKER_RELAY_VIRTUAL_HOST:}

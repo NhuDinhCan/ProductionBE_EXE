@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:production_test;MODE=MSSQLServer;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+jwt:
+  secret-key: test-secret-key-with-at-least-sixty-four-characters-for-hs384-signing
+  access-token-expiration: 1800000
+  refresh-token-expiration: 1209600000
+
+app:
+  allowed-origins: http://localhost:5173
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

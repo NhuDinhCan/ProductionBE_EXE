@@ -1,0 +1,77 @@
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: ${SHUTDOWN_TIMEOUT:30s}
+
+  datasource:
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:2}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:30000}
+      validation-timeout: ${DB_VALIDATION_TIMEOUT_MS:5000}
+      idle-timeout: ${DB_IDLE_TIMEOUT_MS:600000}
+      max-lifetime: ${DB_MAX_LIFETIME_MS:1800000}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+server:
+  forward-headers-strategy: framework
+  shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+  tomcat:
+    threads:
+      max: ${TOMCAT_MAX_THREADS:200}
+      min-spare: ${TOMCAT_MIN_SPARE_THREADS:10}
+    connection-timeout: ${TOMCAT_CONNECTION_TIMEOUT:20s}
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:8192}
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:WARN}
+    org.hibernate.SQL: WARN
+
+app:
+  allowed-origins: ${ALLOWED_ORIGINS}
+  websocket:
+    broker:
+      relay:
+        enabled: ${WEBSOCKET_BROKER_RELAY_ENABLED:true}
+        host: ${WEBSOCKET_BROKER_RELAY_HOST}
+        port: ${WEBSOCKET_BROKER_RELAY_PORT:61613}
+        client-login: ${WEBSOCKET_BROKER_RELAY_CLIENT_LOGIN}
+        client-passcode: ${WEBSOCKET_BROKER_RELAY_CLIENT_PASSCODE}
+        system-login: ${WEBSOCKET_BROKER_RELAY_SYSTEM_LOGIN}
+        system-passcode: ${WEBSOCKET_BROKER_RELAY_SYSTEM_PASSCODE}
+        virtual-host: ${WEBSOCKET_BROKER_RELAY_VIRTUAL_HOST:/}
