@@ -11,4 +11,3 @@
 target/*
 !target/production-0.0.1-SNAPSHOT.jar
 HELP.md
-src
