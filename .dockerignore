@@ -3,11 +3,9 @@
 .gitignore
 .gitattributes
 .idea
-.mvn
 .vscode
 *.iml
 .env
 .env.*
-target/*
-!target/production-0.0.1-SNAPSHOT.jar
+target
 HELP.md
