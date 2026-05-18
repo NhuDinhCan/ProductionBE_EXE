@@ -1,10 +1,22 @@
+FROM eclipse-temurin:21-jdk-alpine AS build
+
+WORKDIR /app
+
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw
+RUN ./mvnw dependency:go-offline -B
+
+COPY src src
+RUN ./mvnw clean package -DskipTests
+
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
 RUN addgroup -S app && adduser -S app -G app
 
-COPY --chown=app:app target/production-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build --chown=app:app /app/target/production-0.0.1-SNAPSHOT.jar app.jar
 
 USER app
 
