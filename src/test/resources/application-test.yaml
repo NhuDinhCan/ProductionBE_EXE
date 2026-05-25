@@ -1,9 +1,11 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:production_test;MODE=MSSQLServer;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:production_test;MODE=MySQL;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  flyway:
+    enabled: false
   jpa:
     open-in-view: false
     hibernate:
@@ -11,6 +13,7 @@ spring:
     show-sql: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
         format_sql: false
   data:
     redis:
@@ -36,3 +39,6 @@ management:
     web:
       exposure:
         include: health,info
+  health:
+    redis:
+      enabled: false

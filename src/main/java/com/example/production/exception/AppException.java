@@ -32,4 +32,8 @@ public class AppException extends RuntimeException {
     public static AppException forbidden(String message) {
         return new AppException(HttpStatus.FORBIDDEN, message);
     }
+
+    public static AppException tooManyRequests(String message) {
+        return new AppException(HttpStatus.TOO_MANY_REQUESTS, message);
+    }
 }

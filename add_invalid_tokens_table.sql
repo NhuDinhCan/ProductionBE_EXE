@@ -5,8 +5,7 @@ IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='invalid_tokens' AND xtype='U
 BEGIN
     CREATE TABLE invalid_tokens (
         id               NVARCHAR(255) PRIMARY KEY,
-        token            NVARCHAR(MAX) NOT NULL,
-        expiration_time  DATETIME
+        expiration_time  DATETIME2 NOT NULL
     );
     PRINT 'Table invalid_tokens created.';
 END

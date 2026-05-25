@@ -19,8 +19,6 @@ public class InvalidtedToken {
     @Id
     private String id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String token;
-
+    @Column(name = "expiration_time", nullable = false)
     private Date expirationTime;
 }

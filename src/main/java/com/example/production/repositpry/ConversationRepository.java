@@ -15,7 +15,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
 
     Optional<Conversation> findFirstByUserIdAndMentorId(Long userId, Long mentorId);
 
-    @Query(value = "SELECT TOP 1 * FROM conversation WHERE (user_id = :u1 AND mentor_id = :u2) OR (user_id = :u2 AND mentor_id = :u1)", nativeQuery = true)
+    @Query(value = "SELECT * FROM conversation WHERE (user_id = :u1 AND mentor_id = :u2) OR (user_id = :u2 AND mentor_id = :u1) LIMIT 1", nativeQuery = true)
     Optional<Conversation> findChatBetweenSafe(@Param("u1") Long user1, @Param("u2") Long user2);
 
     // Dùng native query vì Conversation không có @ManyToOne trực tiếp tới User

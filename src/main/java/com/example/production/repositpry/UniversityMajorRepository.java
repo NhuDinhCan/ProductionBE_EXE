@@ -2,6 +2,7 @@ package com.example.production.repositpry;
 
 
 import com.example.production.entity.UniversityMajor;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +15,7 @@ public interface UniversityMajorRepository extends JpaRepository<UniversityMajor
             Long careerId,
             Double score
     );
+
+    @EntityGraph(attributePaths = {"university", "career"})
+    List<UniversityMajor> findTop8ByCareerIdOrderByScoreRequiredDesc(Long careerId);
 }

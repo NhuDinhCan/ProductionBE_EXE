@@ -3,6 +3,7 @@ package com.example.production.controller;
 
 import com.example.production.dto.AnswerDTO;
 import com.example.production.dto.CareerResultDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ public class QuizController {
     private final QuizService quizService;
 
     @PostMapping("/result")
-    public List<CareerResultDTO> calculateResult(@RequestBody List<AnswerDTO> answers){
+    public List<CareerResultDTO> calculateResult(@Valid @RequestBody List<@Valid AnswerDTO> answers){
         return quizService.calculateResult(answers);
     }
 }

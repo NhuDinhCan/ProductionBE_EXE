@@ -20,13 +20,13 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "conversation_id", nullable = false, columnDefinition = "bigint")
+    @Column(name = "conversation_id", nullable = false)
     private Long conversationId;
 
     @Column(name = "sender_email", nullable = false)
     private String senderEmail;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "created_at")

@@ -3,6 +3,7 @@ package com.example.production.controller;
 
 import com.example.production.dto.UniversityRequestDTO;
 import com.example.production.dto.UniversityResponseDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,7 @@ public class UniversityController {
 
     @PostMapping("/suggest")
     public List<UniversityResponseDTO> suggestUniversity(
-            @RequestBody UniversityRequestDTO request
+            @Valid @RequestBody UniversityRequestDTO request
     ){
         return universityService.suggestUniversity(request);
     }

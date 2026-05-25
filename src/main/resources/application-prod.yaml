@@ -11,6 +11,9 @@ spring:
       idle-timeout: ${DB_IDLE_TIMEOUT_MS:600000}
       max-lifetime: ${DB_MAX_LIFETIME_MS:1800000}
 
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+
   data:
     redis:
       host: ${REDIS_HOST}
@@ -19,11 +22,21 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: ${HIBERNATE_DIALECT:org.hibernate.dialect.MySQLDialect}
+        format_sql: ${JPA_FORMAT_SQL:false}
 
 server:
   forward-headers-strategy: framework
   shutdown: graceful
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
@@ -55,15 +68,30 @@ management:
       show-details: never
       probes:
         enabled: true
+  health:
+    redis:
+      enabled: ${REDIS_HEALTH_ENABLED:true}
 
 logging:
   level:
     root: ${LOG_LEVEL_ROOT:INFO}
     org.springframework.security: ${LOG_LEVEL_SECURITY:WARN}
-    org.hibernate.SQL: WARN
+    org.hibernate.SQL: ${LOG_LEVEL_HIBERNATE_SQL:WARN}
+
+ai:
+  base-url: ${AI_BASE_URL:https://openrouter.ai/api/v1/chat/completions}
+  model: ${AI_MODEL:deepseek/deepseek-chat-v3-0324:free}
+  api-key: ${AI_API_KEY}
+  timeout-seconds: ${AI_TIMEOUT_SECONDS:60}
+  rate-limit-per-minute: ${AI_RATE_LIMIT_PER_MINUTE:20}
 
 app:
   allowed-origins: ${ALLOWED_ORIGINS}
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:60}
+    auth-limit: ${RATE_LIMIT_AUTH_LIMIT:20}
+    register-limit: ${RATE_LIMIT_REGISTER_LIMIT:10}
   websocket:
     broker:
       relay:

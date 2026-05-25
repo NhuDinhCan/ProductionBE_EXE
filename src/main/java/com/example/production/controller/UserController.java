@@ -7,6 +7,9 @@ import com.example.production.dto.UserCreationResponse;
 import com.example.production.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +20,6 @@ import com.example.production.repositpry.UserRepository;
 import com.example.production.service.UserService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,13 +45,18 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getUsers(
             @RequestParam(defaultValue = "false") boolean excludeSelf,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
             @AuthenticationPrincipal Jwt jwt) {
         String email = jwt.getSubject();
-        List<User> users = excludeSelf
-                ? userRepository.findByEmailNot(email)
-                : userRepository.findAll();
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 50);
+        Pageable pageable = PageRequest.of(safePage, safeSize);
+        Page<User> users = excludeSelf
+                ? userRepository.findByEmailNot(email, pageable)
+                : userRepository.findAll(pageable);
 
-        List<Map<String, Object>> result = users.stream().map(u -> {
+        var result = users.getContent().stream().map(u -> {
             Map<String, Object> m = new HashMap<>();
             m.put("id", u.getId());
             m.put("email", u.getEmail());
@@ -59,7 +66,14 @@ public class UserController {
             return m;
         }).toList();
 
-        return ResponseEntity.ok(Map.of("content", result));
+        return ResponseEntity.ok(Map.of(
+                "content", result,
+                "page", users.getNumber(),
+                "size", users.getSize(),
+                "totalElements", users.getTotalElements(),
+                "totalPages", users.getTotalPages(),
+                "hasNext", users.hasNext()
+        ));
     }
 
     /** Chỉ ADMIN tạo được MENTOR */

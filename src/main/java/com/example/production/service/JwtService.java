@@ -49,19 +49,22 @@ public class JwtService {
     }
 
     private String buildToken(User user, long expirationMs, String tokenType) {
-        List<String> roles = user.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).toList();
-
-        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+        JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
                 .subject(user.getEmail())
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().toEpochMilli() + expirationMs))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("userId", user.getId())
-                .claim("authorities", roles)
                 .claim("first_name", user.getFirstName())
-                .claim("token_type", tokenType)
-                .build();
+                .claim("token_type", tokenType);
+
+        if ("access".equals(tokenType)) {
+            List<String> roles = user.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority).toList();
+            claimsBuilder.claim("authorities", roles);
+        }
+
+        JWTClaimsSet claims = claimsBuilder.build();
 
         JWSObject jws = new JWSObject(new JWSHeader(ALGORITHM), new Payload(claims.toJSONObject()));
         try {

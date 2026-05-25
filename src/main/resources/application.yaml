@@ -3,21 +3,30 @@ spring:
     name: production
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: "${DB_URL:jdbc:mysql://localhost:3306/exe?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci}"
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: ${JPA_DDL_AUTO:update}
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: false
+    show-sql: ${JPA_SHOW_SQL:true}
     properties:
       hibernate:
-        format_sql: false
+        dialect: ${HIBERNATE_DIALECT:org.hibernate.dialect.MySQLDialect}
+        format_sql: ${JPA_FORMAT_SQL:false}
 
   data:
     redis:
@@ -51,11 +60,22 @@ management:
     health:
       probes:
         enabled: true
+  health:
+    redis:
+      enabled: ${REDIS_HEALTH_ENABLED:false}
 
 jwt:
   secret-key: ${JWT_SECRET}
   access-token-expiration: 1800000
   refresh-token-expiration: 1209600000
+  revoked-token-cleanup-interval-ms: 3600000
+
+ai:
+  base-url: ${AI_BASE_URL:https://openrouter.ai/api/v1/chat/completions}
+  model: ${AI_MODEL:deepseek/deepseek-chat-v3-0324:free}
+  api-key: ${AI_API_KEY:}
+  timeout-seconds: ${AI_TIMEOUT_SECONDS:60}
+  rate-limit-per-minute: ${AI_RATE_LIMIT_PER_MINUTE:20}
 
 app:
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}

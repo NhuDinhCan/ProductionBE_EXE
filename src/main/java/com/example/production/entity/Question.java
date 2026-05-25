@@ -17,6 +17,6 @@ public class Question {
     private Long id;
 
     @Lob
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 }

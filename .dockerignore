@@ -8,4 +8,7 @@
 .env
 .env.*
 target
+backend-local*.log
+fe-preview*.log
+uploads
 HELP.md

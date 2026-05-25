@@ -15,6 +15,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 RUN addgroup -S app && adduser -S app -G app
+RUN mkdir -p /app/uploads/mock-questions && chown -R app:app /app/uploads
 
 COPY --from=build --chown=app:app /app/target/production-0.0.1-SNAPSHOT.jar app.jar
 

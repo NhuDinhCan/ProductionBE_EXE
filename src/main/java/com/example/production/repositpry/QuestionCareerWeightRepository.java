@@ -11,4 +11,10 @@ import java.util.List;
 public interface QuestionCareerWeightRepository extends JpaRepository<QuestionCareerWeight,Long> {
 
     List<QuestionCareerWeight> findByQuestionIdIn(List<Long> questionIds);
+
+    List<QuestionCareerWeight> findByQuestionId(Long questionId);
+
+    boolean existsByQuestionIdAndCareerId(Long questionId, Long careerId);
+
+    boolean existsByQuestionIdAndCareerIdAndIdNot(Long questionId, Long careerId, Long id);
 }

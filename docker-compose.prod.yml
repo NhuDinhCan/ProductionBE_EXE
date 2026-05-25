@@ -74,8 +74,8 @@ services:
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:?RABBITMQ_DEFAULT_USER is required}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?RABBITMQ_DEFAULT_PASS is required}
     command: sh -c "rabbitmq-plugins enable --offline rabbitmq_stomp && rabbitmq-server"
     restart: unless-stopped
     volumes:
@@ -112,6 +112,8 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+    volumes:
+      - uploads_data:/app/uploads
     security_opt:
       - no-new-privileges:true
     depends_on:
@@ -129,11 +131,12 @@ services:
   web:
     image: production-web:latest
     build:
-      context: ../FE
+      context: ./FE
       dockerfile: Dockerfile
       args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-        VITE_WS_URL: ${VITE_WS_URL}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:?VITE_API_BASE_URL is required}
+        VITE_WS_URL: ${VITE_WS_URL:?VITE_WS_URL is required}
+        VITE_NGROK_SKIP_WARNING: ${VITE_NGROK_SKIP_WARNING:-false}
     ports:
       - "${WEB_PORT:-80}:8080"
     restart: unless-stopped
@@ -157,3 +160,4 @@ services:
 volumes:
   rabbitmq_data:
   redis_data:
+  uploads_data:

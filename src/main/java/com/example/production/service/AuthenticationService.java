@@ -1,6 +1,5 @@
 package com.example.production.service;
 
-
 import com.example.production.dto.RefreshTokenRequest;
 import com.example.production.dto.RefreshTokenResponse;
 import com.example.production.dto.SignInRequest;
@@ -8,8 +7,9 @@ import com.example.production.dto.SignInResponse;
 import com.example.production.entity.InvalidtedToken;
 import com.example.production.entity.User;
 import com.example.production.exception.AppException;
+import com.example.production.repositpry.InvalidtedTokenRepository;
+import com.example.production.repositpry.UserRepository;
 import com.nimbusds.jwt.SignedJWT;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,8 +18,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
-import com.example.production.repositpry.InvalidtedTokenRepository;
-import com.example.production.repositpry.UserRepository;
+import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 
@@ -44,19 +43,16 @@ public class AuthenticationService {
                 .build();
     }
 
-    public void logout(String accessToken) throws ParseException {
-        SignedJWT jwt = SignedJWT.parse(accessToken);
-        invalidtedTokenRepository.save(InvalidtedToken.builder()
-                .id(jwt.getJWTClaimsSet().getJWTID())
-                .token(accessToken)
-                .expirationTime(jwt.getJWTClaimsSet().getExpirationTime())
-                .build());
-        log.info("Logout: {}", jwt.getJWTClaimsSet().getSubject());
+    public void logout(String accessToken, String refreshToken) {
+        revokeToken(accessToken);
+        revokeToken(refreshToken);
+        log.info("Logout completed");
     }
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
-        if (StringUtils.isBlank(request.getRefreshToken()))
+        if (!StringUtils.hasText(request.getRefreshToken())) {
             throw AppException.badRequest("Refresh token không được để trống");
+        }
 
         Jwt jwt;
         try {
@@ -72,8 +68,31 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(jwt.getSubject())
                 .orElseThrow(() -> AppException.notFound("Người dùng không tồn tại"));
 
+        revokeToken(request.getRefreshToken());
+
         return RefreshTokenResponse.builder()
                 .accessToken(jwtService.generateAccessToken(user))
+                .refreshToken(jwtService.generateRefreshToken(user))
                 .build();
+    }
+
+    private void revokeToken(String token) {
+        if (!StringUtils.hasText(token)) {
+            return;
+        }
+
+        try {
+            SignedJWT jwt = SignedJWT.parse(token);
+            String jwtId = jwt.getJWTClaimsSet().getJWTID();
+            if (!StringUtils.hasText(jwtId)) {
+                throw AppException.unauthorized("Token không hợp lệ");
+            }
+            invalidtedTokenRepository.save(InvalidtedToken.builder()
+                    .id(jwtId)
+                    .expirationTime(jwt.getJWTClaimsSet().getExpirationTime())
+                    .build());
+        } catch (ParseException ex) {
+            throw AppException.unauthorized("Token không hợp lệ");
+        }
     }
 }
